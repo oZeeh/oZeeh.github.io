@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vim Motion Game</title>
+    <style>
+        body {
+            font-family: monospace;
+            white-space: pre;
+            background-color: #282c34;
+            color: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        #game {
+            border: 1px solid white;
+            padding: 10px;
+            min-width: 20ch;
+        }
+        .cursor {
+            background-color: yellow;
+            color: black;
+        }
+        .reset-button {
+            font-family: monospace;
+            white-space: pre;
+            background-color: #282c34;
+            color: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border: 1px solid white;
+        }
+    </style>
+</head>
+<body>
+    <div style="font-family: monospace;">Bem vindo ao VIM Motions</div>
+    <button class="reset-button" onclick="location.reload()">Reset</button>
+    <div id="game"></div>
+    <script>
+        let texts = {
+            first: "Olá usuário, apague toda essa linha segurando X para começarmos :)",
+            second: "Muito bem, agora apague apenas o --> X <--"
+        };
+        
+        let currentTextKey = "first";
+        let text = texts[currentTextKey].split("");
+        let cursorPos = 0;
+        
+        function render() {
+            if (text.length === 0 && currentTextKey === "first") {
+                currentTextKey = "second";
+                text = texts[currentTextKey].split("");
+                cursorPos = 0;
+            } else if (currentTextKey === "second" && !text.includes("X")) {
+                document.getElementById("game").innerHTML = "Parabéns! Você concluiu o desafio!";
+                return;
+            }
+            
+            let displayText = text.map((char, i) => i === cursorPos ? `<span class="cursor">${char}</span>` : char).join("");
+            document.getElementById("game").innerHTML = displayText;
+        }
+        
+        document.addEventListener("keydown", (event) => {
+            if (event.key === "h" && cursorPos > 0) cursorPos--;
+            if (event.key === "l" && cursorPos < text.length - 1) cursorPos++;
+            if (event.key === "x" && text.length > 0) {
+                if (currentTextKey === "second" && text[cursorPos] !== "X") return;
+                text.splice(cursorPos, 1);
+                if (cursorPos >= text.length) cursorPos--;
+            }
+            render();
+        });
+        
+        render();
+    </script>
+</body>
+</html>
