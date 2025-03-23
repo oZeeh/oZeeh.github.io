@@ -42,28 +42,33 @@
 </head>
 <body>
     <h1 style="font-family: monospace; text-align: center;">Bem vindo ao VIM Motions</h1>
-    <div id="helper"></div>
+    <div id="first-helper"></div>
+    <div id="second-helper"></div>
     <div id="game"></div>
     <button class="reset-button" onclick="location.reload()">Reset</button>
     <script>
         let texts = {
-            first: "Olá usuário, apague toda essa linha segurando X para começarmos :)",
+            first: "Aperte d duas vezes para apagar toda a linha para começarmos :)",
             firstHelper: "Mova para a direita com L e para a esquerda com H",
+            secondHelper: "Aperte x para apagar apenas um caracter",
             second: "Muito bem, agora apague apenas o --> X <--"
         };
         
         let currentTextKey = "first";
         let text = texts[currentTextKey].split("");
         let cursorPos = 0;
+        let lastKey = "";
+        let lastKeyTime = 0;
         
         function render() {
             if (text.length === 0 && currentTextKey === "first") {
-                document.getElementById("helper").innerHTML = texts.firstHelper
+                document.getElementById("first-helper").innerHTML = texts.firstHelper
+                document.getElementById("second-helper").innerHTML = texts.secondHelper
                 currentTextKey = "second";
                 text = texts[currentTextKey].split("");
                 cursorPos = 0;
             } else if (currentTextKey === "second" && !text.includes("X")) {
-                document.getElementById("helper").innerHTML = ""
+                document.getElementById("first-helper").innerHTML = ""
                 document.getElementById("game").innerHTML = "Parabéns! Você concluiu o desafio!";
                 return;
             }
@@ -73,6 +78,8 @@
         }
         
         document.addEventListener("keydown", (event) => {
+            let currentTime = new Date().getTime();
+
             if (event.key === "h" && cursorPos > 0) cursorPos--;
             if (event.key === "l" && cursorPos < text.length - 1) cursorPos++;
             if (event.key === "x" && text.length > 0) {
@@ -80,6 +87,16 @@
                 text.splice(cursorPos, 1);
                 if (cursorPos >= text.length) cursorPos--;
             }
+             if (event.key === 'd') {
+                if (lastKey === 'd' && currentTime - lastKeyTime < 500){
+                    text = [];
+                }
+                console.log("bom dia", event.key)
+                lastKey = 'd'
+                lastKeyTime = currentTime;
+            } else {
+                lastKey = ""
+            } 
             render();
         });
         
